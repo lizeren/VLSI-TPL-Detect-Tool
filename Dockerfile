@@ -1,36 +1,24 @@
-# Use the official CUDA image with Ubuntu 22.04 and CUDA 11.8
-FROM nvidia/cuda:11.8.0-cudnn8-devel-ubuntu22.04
+# Use ivoryseeker/libam-img as the base image
+FROM ivoryseeker/libam-img:latest
 
-# Set the default shell
-SHELL ["/bin/bash", "-c"]
+# Install CUDA 12.1 dependencies
+RUN apt update && apt install -y wget gnupg software-properties-common curl
 
-# Prevent interactive prompts during installation
-ENV DEBIAN_FRONTEND=noninteractive
+# Add the NVIDIA CUDA repository for CUDA 12.1
+RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-ubuntu2204.pin -O /etc/apt/preferences.d/cuda-repository-pin-600 && \
+    curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/3bf863cc.pub | apt-key add - && \
+    add-apt-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/ /"
 
-# Add the deadsnakes PPA to install Python 3.9
-RUN apt-get update && apt-get install -y software-properties-common && \
-    add-apt-repository ppa:deadsnakes/ppa
+# Install CUDA toolkit 12.1
+RUN apt update && apt install -y cuda-toolkit-12-1
 
-# Update and install basic utilities
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3.9 python3.9-dev python3.9-distutils tzdata build-essential wget curl git && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+# Clean up
+RUN rm -rf /var/lib/apt/lists/*
 
-# Install pip manually
-RUN wget https://bootstrap.pypa.io/get-pip.py && python3.9 get-pip.py && rm get-pip.py
+# Set the PATH to include CUDA binaries
+ENV PATH="/usr/local/cuda/bin:$PATH"
 
-# Set Python3 as default
-RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.9 1
+ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 
-# Install Python packages using PyPI with CUDA 11.8 support
-RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 --root-user-action=ignore && \
-    pip install --no-cache-dir numpy pandas --root-user-action=ignore
 
-# Verify CUDA installation
-RUN nvcc --version
-
-# Set the working directory
-WORKDIR /workspace
-
-# Default command
-CMD ["python"]
+CMD ["/bin/bash"]
