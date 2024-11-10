@@ -1,6 +1,7 @@
 
 # TPL checker
 
+This repo is an addendum to [LibAM](https://github.com/Siyuan-Li201/LibAM)
 
 ## How to use this repo
 ### Building the Docker Image
