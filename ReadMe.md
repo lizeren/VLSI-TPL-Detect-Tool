@@ -7,7 +7,7 @@
 I use ivoryseeker/libam-img (from the paper repo) as the base image, then install CUDA based on that. You can refer to _Dockerfile_. 
 To build your updated Docker image:
 ```bash
-sudo docker build -t libam-cuda-121
+sudo docker build -t libam-cuda
 ```
 
 
@@ -15,7 +15,7 @@ sudo docker build -t libam-cuda-121
 After successfully building the image, run it with:
 
 ```bash
-sudo docker run --gpus all -e CUDA_VISIBLE_DEVICES=0 -it --rm libam-cuda-121-updated bash
+sudo docker run --gpus all -e CUDA_VISIBLE_DEVICES=0 -it --rm libam-cuda bash
 ```
 
 ### Verifying CUDA Installation
@@ -28,7 +28,7 @@ nvidia-smi
 python3 -c "import torch; print('CUDA available:', torch.cuda.is_available())"
 ```
 ## Error when running those pythons 
-when running _python3 2_embedding.py_, I have seen this error
+when running _python3 2_embedding.py_, this error occured mant times even all the dependency to CUDA are resolved.
 ```
 RuntimeError('Attempting to deserialize object on a CUDA ' 
 RuntimeError: Attempting to deserialize object on a CUDA device but torch.cuda.is_available() is False. 
@@ -36,7 +36,7 @@ If you are running on a CPU-only machine,
 please use torch.load with map_location=torch.device('cpu') to map your storages to the CPU.
 ```
 
-To solve this, I add the following sanity check and Initilization to the **very beginning** of 2_embedding.py 
+To solve this, I add the following sanity check and Initialization to the **very beginning** of 2_embedding.py 
 ```python
 import torch
 torch.cuda.empty_cache()
@@ -49,7 +49,7 @@ if  torch.cuda.is_available():
 else:
 	print("No CUDA devices found")
 ```
-
+why? I guess it is because the repo **loads a PyTorch model that was saved with CUDA tensors** on the docker system where CUDA is not properly initialized
 
 ## How to save intermediate progress/final result to the image
 
