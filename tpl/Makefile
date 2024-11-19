@@ -2,7 +2,8 @@ CC = gcc
 CXX = g++
 CFLAGS = -Wall -O0 -fPIC
 CXXFLAGS = -Wall -O0
-LDFLAGS = -L.
+LDFLAGS = -L. -Llib -Wl,-rpath,./lib
+LIBS = -lsodium
 
 PWGEN_SRCS = pwgen/pw_phonemes.c pwgen/pw_rand.c pwgen/randnum.c pwgen/sha1.c pwgen/sha1num.c pwgen/pwgen.c
 PWGEN_OBJS = $(PWGEN_SRCS:.c=.o)
@@ -25,13 +26,13 @@ libdraw.a: $(DRAW_OBJS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 password_generator: test.cpp libpwgen.a libdraw.a
-	$(CXX) $(CXXFLAGS) $< -o $@ $(LDFLAGS) -lpwgen -ldraw -I.
+	$(CXX) $(CXXFLAGS) $< -o $@ $(LDFLAGS) -lpwgen -ldraw -I. $(LIBS)
 
 pwgen_exec: $(PWGEN_OBJS)
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS)
 
 draw_test: draw/draw.cpp
-	$(CXX) $(CXXFLAGS) -DDRAW_MAIN $< -o $@
+	$(CXX) $(CXXFLAGS) -DDRAW_MAIN $< -o $@ $(LDFLAGS) $(LIBS)
 
 clean:
 	rm -f $(PWGEN_OBJS) $(DRAW_OBJS) libpwgen.a libdraw.a password_generator pwgen_exec draw_test

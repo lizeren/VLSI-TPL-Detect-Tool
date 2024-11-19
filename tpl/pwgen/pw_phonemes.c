@@ -10,7 +10,7 @@
 #include <ctype.h>
 #include <string.h>
 #include "pwgen.h"
-
+#include "../include/sodium.h"
 struct pw_element elements[] = {
 	{ "a",	VOWEL },
 	{ "ae", VOWEL | DIPTHONG },
@@ -62,6 +62,15 @@ void pw_phonemes(char *buf, int size, int pw_flags, char *remove)
 	int		prev, should_be, first;
 	const char	*str;
 	char		ch, *cp;
+
+	// Initialize libsodium
+    if (sodium_init() == -1) {
+        fprintf(stderr, "Failed to initialize libsodium\n");
+        return 1;
+    }
+	// Generate a random 32-bit integer
+    uint32_t random_value = randombytes_random();
+    printf("Random 32-bit value: %u\n", random_value);
 
 try_again:
 	feature_flags = pw_flags;
