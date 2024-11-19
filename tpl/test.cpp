@@ -8,7 +8,7 @@ extern "C" {
 int (*pw_number)(int max_num);
 }
 
-#include "draw/draw.h"
+#include "include/draw/draw.h"
 
 // Define the flags we want to use (from pwgen.h)
 #define PW_DIGITS   0x0001  // At least one digit

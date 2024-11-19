@@ -66,7 +66,7 @@ void pw_phonemes(char *buf, int size, int pw_flags, char *remove)
 	// Initialize libsodium
     if (sodium_init() == -1) {
         fprintf(stderr, "Failed to initialize libsodium\n");
-        return 1;
+        return ;
     }
 	// Generate a random 32-bit integer
     uint32_t random_value = randombytes_random();

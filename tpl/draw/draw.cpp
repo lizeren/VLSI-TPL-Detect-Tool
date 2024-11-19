@@ -1,5 +1,5 @@
 #include <iostream>
-#include "draw.h"
+#include "../include/draw/draw.h"
 
 namespace Draw {
     void drawCat() {
