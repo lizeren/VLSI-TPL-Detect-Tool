@@ -1,7 +1,20 @@
 # Testing TPL 
 
 Currently I have Three TPLs: Pwgen, LibSodium and a c++ program that draws ascii cat and dog. Test.cpp using pwgen to generate passwords and pwgen calls libsodium to generate random bytes. Test.cpp also uses libcurl to download a map file from a website. It also uses draw.h to draw ascii cat and dog.
-  
+
+
+## How to Verify Dynamic or Static Linking
+
+```bash
+ldd password_generator
+```
+Example output (dynamic linking):
+```bash
+libcurl.so.4 => /path/to/libcurl.so.4
+```
+
+
+
 ## How to use
 ```bash
 make
