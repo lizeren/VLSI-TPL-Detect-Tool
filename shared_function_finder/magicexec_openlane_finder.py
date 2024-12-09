@@ -70,9 +70,14 @@ def compare_symbols(lib_path, sta_path, lib_name):
 def main():
     # Paths to libraries and sta
     libraries = [
-        {"path": "/home/lizeren/Desktop/OpenLane-bin/nix/store/libedit-20230828-3.1/lib/libedit.so", "name": "libedit.so"},
+        {"path": "/usr/lib/x86_64-linux-gnu/libtcl.so", "name": "libtcl.so"},
+        {"path": "/lib/x86_64-linux-gnu/libz.so.1", "name": "libz.so.1"},
+        {"path": "/usr/lib/x86_64-linux-gnu/libX11.so.6", "name": "libX11.so.6"},
+        {"path": "/usr/lib/x86_64-linux-gnu/libcairo.so.2", "name": "libcairo.so.2"},
+        {"path": "/usr/lib/x86_64-linux-gnu/libfontconfig.so.1", "name": "libfontconfig.so.1"},
+        {"path": "/usr/lib/x86_64-linux-gnu/libfreetype.so.6", "name": "libfreetype.so.6"},
     ]
-    sta_path = "/home/lizeren/Desktop/OpenLane-bin/nix/target/abc"
+    sta_path = "/home/lizeren/Desktop/OpenLane/bin/magicexec"
 
     # Verify paths exist
     if not os.path.exists(sta_path):
