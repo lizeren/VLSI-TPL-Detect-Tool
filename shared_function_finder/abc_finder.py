@@ -36,20 +36,20 @@ def get_symbols(file_path):
         print(f"Error: {e}")
         return {"defined": set(), "undefined": set()}
 
-def compare_symbols(lib_path, sta_path, lib_name):
+def compare_symbols(lib_path, abc_path, lib_name):
     """
-    Compare symbols between a library and sta, ensuring only symbols
-    that are undefined in sta and defined in the library are counted.
+    Compare symbols between a library and abc, ensuring only symbols
+    that are undefined in abc and defined in the library are counted.
     Undefined symbols in both are excluded.
     :param lib_path: Path to the library.
-    :param sta_path: Path to sta executable.
+    :param abc_path: Path to abc executable.
     :param lib_name: Name of the library for reporting.
     """
     print(f"Analyzing symbols for {lib_name}...")
 
-    # Extract symbols for library and sta
+    # Extract symbols for library and abc
     lib_symbols = get_symbols(lib_path)
-    sta_symbols = get_symbols(sta_path)
+    sta_symbols = get_symbols(abc_path)
 
     # Filter symbols
     lib_defined_symbols = lib_symbols["defined"]
@@ -59,30 +59,30 @@ def compare_symbols(lib_path, sta_path, lib_name):
     # Remove symbols undefined in both
     filtered_sta_symbols = sta_undefined_symbols - lib_undefined_symbols
 
-    # Keep only symbols that are defined in the library and used by sta
+    # Keep only symbols that are defined in the library and used by abc
     used_symbols = lib_defined_symbols & filtered_sta_symbols
 
-    print(f"Found {len(used_symbols)} symbols from {lib_name} used in sta:")
+    print(f"Found {len(used_symbols)} symbols from {lib_name} used in abc:")
     for symbol in sorted(used_symbols):
         print(symbol)
     print("\n")
 
 def main():
-    # Paths to libraries and sta
+    # Paths to libraries and abc
     libraries = [
         {"path": "/home/lizeren/Desktop/OpenLane-bin/nix/store/libedit-20230828-3.1/lib/libedit.so", "name": "libedit.so"},
     ]
-    sta_path = "/home/lizeren/Desktop/OpenLane-bin/nix/target/abc"
+    abc_path = "/home/lizeren/Desktop/OpenLane-bin/nix/target/abc"
 
     # Verify paths exist
-    if not os.path.exists(sta_path):
-        print(f"Error: {sta_path} does not exist.")
+    if not os.path.exists(abc_path):
+        print(f"Error: {abc_path} does not exist.")
         return
 
     # Sequentially analyze each library
     for lib in libraries:
         if os.path.exists(lib["path"]):
-            compare_symbols(lib["path"], sta_path, lib["name"])
+            compare_symbols(lib["path"], abc_path, lib["name"])
         else:
             print(f"Error: {lib['path']} does not exist.")
 

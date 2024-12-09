@@ -36,20 +36,20 @@ def get_symbols(file_path):
         print(f"Error: {e}")
         return {"defined": set(), "undefined": set()}
 
-def compare_symbols(lib_path, sta_path, lib_name):
+def compare_symbols(lib_path, yosys_path, lib_name):
     """
-    Compare symbols between a library and sta, ensuring only symbols
-    that are undefined in sta and defined in the library are counted.
+    Compare symbols between a library and yosys, ensuring only symbols
+    that are undefined in yosys and defined in the library are counted.
     Undefined symbols in both are excluded.
     :param lib_path: Path to the library.
-    :param sta_path: Path to sta executable.
+    :param yosys_path: Path to yosys executable.
     :param lib_name: Name of the library for reporting.
     """
     print(f"Analyzing symbols for {lib_name}...")
 
-    # Extract symbols for library and sta
+    # Extract symbols for library and yosys
     lib_symbols = get_symbols(lib_path)
-    sta_symbols = get_symbols(sta_path)
+    sta_symbols = get_symbols(yosys_path)
 
     # Filter symbols
     lib_defined_symbols = lib_symbols["defined"]
@@ -59,34 +59,35 @@ def compare_symbols(lib_path, sta_path, lib_name):
     # Remove symbols undefined in both
     filtered_sta_symbols = sta_undefined_symbols - lib_undefined_symbols
 
-    # Keep only symbols that are defined in the library and used by sta
+    # Keep only symbols that are defined in the library and used by yosys
     used_symbols = lib_defined_symbols & filtered_sta_symbols
 
-    print(f"Found {len(used_symbols)} symbols from {lib_name} used in sta:")
+    print(f"Found {len(used_symbols)} symbols from {lib_name} used in yosys:")
     for symbol in sorted(used_symbols):
         print(symbol)
     print("\n")
 
 def main():
-    # Paths to libraries and sta
+    # Paths to libraries and yosys
     libraries = [
         {"path": "/lib/x86_64-linux-gnu/libncursesw.so.6", "name": "libncursesw.so.6"},
         {"path": "/home/lizeren/Desktop/OpenLane-bin/nix/store/libedit-20230828-3.1/lib/libedit.so", "name": "libedit.so"},
         {"path": "/home/lizeren/Desktop/OpenLane-bin/nix/store/libffi-3.4.6/lib/libffi.so", "name": "libffi.so"},
         {"path": "/home/lizeren/Desktop/OpenLane-bin/nix/store/zlib-1.3.1/lib/libz.so", "name": "libz.so"},
         {"path": "/usr/lib/x86_64-linux-gnu/libtcl8.6.so", "name": "ibtcl8.6.so"},
+        {"path": "/usr/lib/x86_64-linux-gnu/libbsd.so.0", "name": "libbsd.so.0"},
     ]
-    sta_path = "/home/lizeren/Desktop/VLSI-TPL-Detect-Tool/result/OpenSTA/Target/sta"
+    yosys_path = "/home/lizeren/Desktop/OpenLane-bin/nix/target/yosys"
 
     # Verify paths exist
-    if not os.path.exists(sta_path):
-        print(f"Error: {sta_path} does not exist.")
+    if not os.path.exists(yosys_path):
+        print(f"Error: {yosys_path} does not exist.")
         return
 
     # Sequentially analyze each library
     for lib in libraries:
         if os.path.exists(lib["path"]):
-            compare_symbols(lib["path"], sta_path, lib["name"])
+            compare_symbols(lib["path"], yosys_path, lib["name"])
         else:
             print(f"Error: {lib['path']} does not exist.")
 
