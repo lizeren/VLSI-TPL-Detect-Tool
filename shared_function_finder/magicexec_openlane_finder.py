@@ -36,20 +36,20 @@ def get_symbols(file_path):
         print(f"Error: {e}")
         return {"defined": set(), "undefined": set()}
 
-def compare_symbols(lib_path, sta_path, lib_name):
+def compare_symbols(lib_path, magicexec_path, lib_name):
     """
-    Compare symbols between a library and sta, ensuring only symbols
-    that are undefined in sta and defined in the library are counted.
+    Compare symbols between a library and magicexec, ensuring only symbols
+    that are undefined in magicexec and defined in the library are counted.
     Undefined symbols in both are excluded.
     :param lib_path: Path to the library.
-    :param sta_path: Path to sta executable.
+    :param magicexec_path: Path to magicexec executable.
     :param lib_name: Name of the library for reporting.
     """
     print(f"Analyzing symbols for {lib_name}...")
 
-    # Extract symbols for library and sta
+    # Extract symbols for library and magicexec
     lib_symbols = get_symbols(lib_path)
-    sta_symbols = get_symbols(sta_path)
+    sta_symbols = get_symbols(magicexec_path)
 
     # Filter symbols
     lib_defined_symbols = lib_symbols["defined"]
@@ -59,16 +59,16 @@ def compare_symbols(lib_path, sta_path, lib_name):
     # Remove symbols undefined in both
     filtered_sta_symbols = sta_undefined_symbols - lib_undefined_symbols
 
-    # Keep only symbols that are defined in the library and used by sta
+    # Keep only symbols that are defined in the library and used by magicexec
     used_symbols = lib_defined_symbols & filtered_sta_symbols
 
-    print(f"Found {len(used_symbols)} symbols from {lib_name} used in sta:")
+    print(f"Found {len(used_symbols)} symbols from {lib_name} used in magicexec:")
     for symbol in sorted(used_symbols):
         print(symbol)
     print("\n")
 
 def main():
-    # Paths to libraries and sta
+    # Paths to libraries and magicexec
     libraries = [
         {"path": "/usr/lib/x86_64-linux-gnu/libtcl.so", "name": "libtcl.so"},
         {"path": "/lib/x86_64-linux-gnu/libz.so.1", "name": "libz.so.1"},
@@ -76,18 +76,32 @@ def main():
         {"path": "/usr/lib/x86_64-linux-gnu/libcairo.so.2", "name": "libcairo.so.2"},
         {"path": "/usr/lib/x86_64-linux-gnu/libfontconfig.so.1", "name": "libfontconfig.so.1"},
         {"path": "/usr/lib/x86_64-linux-gnu/libfreetype.so.6", "name": "libfreetype.so.6"},
+        {"path": "/usr/lib/x86_64-linux-gnu/libxcb.so.1", "name": "libxcb.so.1"},
+        {"path": "/usr/lib/x86_64-linux-gnu/libpixman-1.so.0", "name": "libpixman-1.so.0"},
+        {"path": "/usr/lib/x86_64-linux-gnu/libpng16.so.16", "name": "libpng16.so.16"},
+        {"path": "/usr/lib/x86_64-linux-gnu/libxcb-shm.so.0", "name": "libxcb-shm.so.0"},
+        {"path": "/usr/lib/x86_64-linux-gnu/libxcb-render.so.0", "name": "libxcb-render.so.0"},
+        {"path": "/usr/lib/x86_64-linux-gnu/libXrender.so.1", "name": "libXrender.so.1"},
+        {"path": "/usr/lib/x86_64-linux-gnu/libXext.so.6", "name": "libXext.so.6"},
+        {"path": "/lib/x86_64-linux-gnu/libexpat.so.1", "name": "libexpat.so.1"},
+        {"path": "/lib/x86_64-linux-gnu/libuuid.so.1", "name": "libuuid.so.1"},
+        {"path": "/usr/lib/x86_64-linux-gnu/libXau.so.6", "name": "libXau.so.6"},
+        {"path": "/usr/lib/x86_64-linux-gnu/libXdmcp.so.6", "name": "libXdmcp.so.6"},
+        {"path": "/usr/lib/x86_64-linux-gnu/libbsd.so.0", "name": "libbsd.so.0"},
+        
+        
     ]
-    sta_path = "/home/lizeren/Desktop/OpenLane/bin/magicexec"
+    magicexec_path = "/home/lizeren/Desktop/OpenLane/bin/magicexec"
 
     # Verify paths exist
-    if not os.path.exists(sta_path):
-        print(f"Error: {sta_path} does not exist.")
+    if not os.path.exists(magicexec_path):
+        print(f"Error: {magicexec_path} does not exist.")
         return
 
     # Sequentially analyze each library
     for lib in libraries:
         if os.path.exists(lib["path"]):
-            compare_symbols(lib["path"], sta_path, lib["name"])
+            compare_symbols(lib["path"], magicexec_path, lib["name"])
         else:
             print(f"Error: {lib['path']} does not exist.")
 
